@@ -6,7 +6,12 @@ const bookingsRoute = require("./routes/bookings");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/vehicles", vehiclesRoute);
