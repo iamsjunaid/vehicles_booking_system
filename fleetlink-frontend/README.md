@@ -1,69 +1,162 @@
-# React + TypeScript + Vite
+# 🚚 FleetLink - Logistics Vehicle Booking System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FleetLink is a full-stack web application for managing and booking logistics vehicles.  
+It includes:
 
-Currently, two official plugins are available:
+- **Backend**: Node.js + Express + MongoDB
+- **Frontend**: React (Vite + TypeScript)
+- **Database**: MongoDB
+- **Testing**: Jest + Supertest (backend)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 📂 Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+.
+├── fleetlink-backend/   # Backend (Express + MongoDB + Jest)
+│   ├── src/
+│   └── Dockerfile
+├── fleetlink-frontend/  # Frontend (React + Vite + TS)
+│   ├── src/
+│   └── Dockerfile
+├── docker-compose.yml   # Compose setup for backend, frontend, mongo
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔧 Features
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Backend
+
+- **POST /api/vehicles** → Add a new vehicle
+- **GET /api/vehicles/available** → Search for available vehicles
+- **POST /api/bookings** → Book a vehicle (conflict-checked)
+- Ride duration formula (simplified):
+  ```
+  estimatedRideDurationHours = Math.abs(toPincode - fromPincode) % 24
+  ```
+
+### Frontend
+
+- **Add Vehicle Page** → Form to add vehicles
+- **Search & Book Page** → Search available vehicles and book instantly
+- Uses Axios for API calls and TailwindCSS for styling
+
+### Testing
+
+- Unit + integration tests for critical backend logic
+- Runs with Jest + Supertest + mongodb-memory-server
+
+---
+
+## 🚀 Local Setup
+
+### 1. Clone Repo
+
+```bash
+git clone https://github.com/iamsjunaid/vehicles_booking_system
+cd vehicles_booking_system
 ```
+
+### 2. Backend
+
+```bash
+cd fleetlink-backend
+npm install
+
+# copy environment variables
+cp .env.example .env
+
+# edit .env
+MONGO_URI=mongodb://localhost:27017/fleetlink
+PORT=5000
+
+# run dev
+npm run dev
+
+# run tests
+npm test
+```
+
+### 3. Frontend
+
+```bash
+cd ../fleetlink-frontend
+npm install
+
+# run dev
+npm run dev
+```
+
+- Backend → `http://localhost:5000`
+- Frontend → `http://localhost:5173`
+
+---
+
+## 🐳 Docker Setup
+
+Ensure [Docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/) are installed.
+
+### 1. Build & Run
+
+```bash
+docker-compose build
+docker-compose up
+```
+
+### 2. Services
+
+- Frontend → http://localhost:3000
+- Backend → http://localhost:5000
+- MongoDB → localhost:27017
+
+---
+
+## 📦 API Endpoints
+
+### Vehicles
+
+- **POST /api/vehicles**
+
+```json
+{ "name": "Truck A", "capacityKg": 1000, "tyres": 6 }
+```
+
+- **GET /api/vehicles/available**
+
+```
+/api/vehicles/available?capacityRequired=500&fromPincode=100001&toPincode=100020&startTime=2025-09-18T10:00:00Z
+```
+
+### Bookings
+
+- **POST /api/bookings**
+
+```json
+{
+  "vehicleId": "64c12345...",
+  "fromPincode": "100001",
+  "toPincode": "100020",
+  "startTime": "2025-09-18T10:00:00Z",
+  "customerId": "cust123"
+}
+```
+
+---
+
+## 🏆 Bonus Features
+
+- Dockerized full stack (`docker-compose`)
+- TailwindCSS styling
+- Extendable with:
+  - Booking cancellation (`DELETE /api/bookings/:id`)
+  - Advanced ride duration logic
+  - Pagination or filtering in frontend
+
+---
+
+## 👨‍💻 Author
+
+Built by **Junaid** ✨
